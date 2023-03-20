@@ -3,7 +3,6 @@ APScheduler
 google-auth-oauthlib
 google-auth
 google-api-python-client
-email_assistant
 sqlite3
 datetime
 requests
