@@ -1,0 +1,17 @@
+Flask
+APScheduler
+google-auth-oauthlib
+google-auth
+google-api-python-client
+email_assistant
+get_gmail
+sqlite3
+datetime
+requests
+openai
+google-auth-api-key
+google-auth-httplib2
+google-auth-oauthlib
+pickle
+re
+http.server
