@@ -4,7 +4,6 @@ google-auth-oauthlib
 google-auth
 google-api-python-client
 email_assistant
-get_gmail
 sqlite3
 datetime
 requests
