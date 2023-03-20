@@ -6,12 +6,25 @@ import email_assistant
 import get_gmail
 import sqlite3
 import datetime
-
+import os
+import psycopg2
 
 app = Flask(__name__)
-con = sqlite3.connect("all_users.db", check_same_thread=False)
+DATABASE_URL = os.environ['DATABASE_URL']
+
+# Connect to the PostgreSQL database
+con = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = con.cursor()
-cur.execute("CREATE TABLE IF NOT EXISTS user (credentials, id, email, current_summary, last_created)")
+
+cur.execute("""
+    CREATE TABLE IF NOT EXISTS user (
+        id SERIAL PRIMARY KEY,
+        credentials TEXT,
+        email TEXT,
+        current_summary TEXT,
+        last_created TIMESTAMP
+    )
+""")
 con.commit()
 
 def run_script():
@@ -37,13 +50,13 @@ def index():
 @app.route('/result/<string:id_>')
 def get_result(id_):
     print(id_)
-    cur.execute("SELECT current_summary FROM user WHERE id = ?", (id_,))
+    cur.execute("SELECT * FROM user WHERE id = %s", (str(id_),))
     row = cur.fetchone()
     if row is None:
         return jsonify(f'Nothing found for id: {id_}'), 404
     else:
         if str(row) == "('No Summary yet come back later',)":
-            cur.execute("SELECT credentials FROM user WHERE id = ?", (id_,))
+            cur.execute("SELECT credentials FROM user WHERE id = %s", (str(id_),))
             creds = cur.fetchall()[0]
             creds_txt = json.loads(creds[0])
             run_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
@@ -73,16 +86,17 @@ def oauth2callback():
     access_token = credentials.token
 
     # Check if the user ID exists
-    cur.execute("SELECT * FROM user WHERE id = ?", (str(credentials.client_id),))
+    cur.execute("SELECT * FROM user WHERE id = %s", (str(credentials.client_id),))
     row = cur.fetchone()
 
     if row is None:
-        # If the user ID does not exist, insert a new row
-        cur.execute("INSERT INTO user (credentials, id, email, current_summary, last_created) VALUES (?, ?, ?, ?, ?)",
-                    (str(credentials.to_json()), str(credentials.client_id), '', 'No Summary yet come back later', ''))
+        cur.execute("""
+            INSERT INTO user (credentials, id, email, current_summary, last_created)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (str(credentials.to_json()), str(credentials.client_id), '', 'No Summary yet come back later', '',))
     else:
-        # If the user ID exists, update the credentials
-        cur.execute("UPDATE user SET credentials = ? WHERE id = ?", (str(credentials.to_json()), str(credentials.client_id),))
+        cur.execute("UPDATE user SET credentials = %s WHERE id = %s",
+                    (str(credentials.to_json()), str(credentials.client_id),))
 
     con.commit()
 
@@ -132,11 +146,9 @@ def get_token():
         </html>
     ''')
 
-@app.route('/get_mail/<string:id_>')
-def get_mail():
-    email_assistant.get_email_messages()
 if __name__ == '__main__':
     try:
-        app.run(port=5001, debug=True)
+        port = int(os.environ.get('PORT', 5001))
+        app.run(port=port, debug=True)
     finally:
         scheduler.shutdown()
