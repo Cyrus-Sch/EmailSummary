@@ -6,6 +6,5 @@ google-api-python-client
 datetime
 requests
 openai
-pickle
 re
 http.server
