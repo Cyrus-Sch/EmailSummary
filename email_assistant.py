@@ -72,9 +72,9 @@ def get_email_messages(credentials_txt_obj, user_id='me'):
     return emails
 
 def summarize_email_gpt(email, assistant_style=True, max_prompt_tokens=4090):
-    f = open("apikeys.txt", 'r')
-    key = f.read()
-    OPENAI_API_KEY = key
+    import os
+
+    api_key = os.environ.get("API_KEY")
     # Truncate the email content if it exceeds the max_prompt_tokens
     if len(email) > max_prompt_tokens:
         email = email[:max_prompt_tokens]
@@ -85,9 +85,9 @@ def summarize_email_gpt(email, assistant_style=True, max_prompt_tokens=4090):
     return openai_chat_api_call(OPENAI_API_KEY, prompt, model)
 
 def summarize_all(email_list, client, styles, max_prompt_tokens=4090):
-    f = open("apikeys.txt", 'r')
-    key = f.read()
-    OPENAI_API_KEY = key
+    import os
+
+    api_key = os.environ.get("API_KEY")
     if len(email_list) < 3:
         print("No summaries!")
         return 1
