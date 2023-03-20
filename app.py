@@ -66,7 +66,7 @@ def oauth2callback():
     flow = InstalledAppFlow.from_client_secrets_file(
         'credentials.json',
         get_gmail.SCOPES,
-        redirect_uri=f'{root_url}/oauth2callback'
+        redirect_uri="https://emailsummary.herokuapp.com/oauth2callback/"
     )
     flow.fetch_token(code=code)
     credentials = flow.credentials
@@ -118,7 +118,7 @@ def oauth2callback():
 @app.route('/get_mail_token/')
 def get_token():
     root_url = app.url_for('index', _external=True)
-    auth_url = get_gmail.get_auth_url(root_url)
+    auth_url = get_gmail.get_auth_url()
     return render_template_string(f'''
         <!doctype html>
         <html lang="en">
