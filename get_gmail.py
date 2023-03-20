@@ -34,7 +34,7 @@ def get_auth_url():
     flow = InstalledAppFlow.from_client_secrets_file(
         'credentials.json',
         SCOPES,
-        redirect_uri=f"https://emailsummary.herokuapp.com/oauth2callback/"
+        redirect_uri="https://emailsummary.herokuapp.com/oauth2callback/"
     )
 
     auth_url, _ = flow.authorization_url(access_type='offline', prompt='consent')
