@@ -1,4 +1,6 @@
 Flask
+requests
+chardet
 APScheduler
 google-auth-oauthlib
 google-auth
