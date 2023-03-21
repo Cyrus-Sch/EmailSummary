@@ -62,18 +62,20 @@ def get_result(id_):
             print("Creds fetched:")
             for cred in creds:
                 print(str(cred))
-            #creds_txt = json.loads(creds[0])
-            #run_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
-            #job_id = f"email_job_{id_}"
+            creds_txt = json.loads(creds[0][0])
+
+            run_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
+            job_id = f"email_job_{str(id_)}"
 
             # Check if the job with the same ID already exists
-            #existing_job = scheduler.get_job(job_id)
-            #if existing_job is None:
-                # If it doesn't exist, add the job
-                #scheduler.add_job(email_assistant.main, 'date', run_date=run_time, args=(creds_txt, cur, con, id_), id=job_id)
-                #print(run_time)
-            #else:
-                #print("Job already scheduled for this id")
+            existing_job = scheduler.get_job(job_id)
+            if existing_job is None:
+                print(f"Job: {str(id_)} does not exist. SCHEDULING JOB")
+                #If it doesn't exist, add the job
+                scheduler.add_job(email_assistant.main, 'date', run_date=run_time, args=(creds_txt, cur, con, id_), id=job_id)
+                print(run_time)
+            else:
+                print("Job already scheduled for this id")
         return jsonify(row), 200
 
 @app.route('/oauth2callback')
