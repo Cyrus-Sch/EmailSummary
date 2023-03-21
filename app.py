@@ -51,7 +51,7 @@ def index():
 @app.route('/result/<string:id_>')
 def get_result(id_):
     print(id_)
-    cur.execute("SELECT * FROM user_of_summary_service WHERE id = %s", (str(id_),))
+    cur.execute("SELECT current_summary FROM user_of_summary_service WHERE id = %s", (str(id_),))
     row = cur.fetchone()
     if row is None:
         return jsonify(f'Nothing found for id: {id_}'), 404
