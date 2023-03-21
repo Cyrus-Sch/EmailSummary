@@ -35,7 +35,7 @@ def background_get_summary(credentials_txt_obj, user_id):
     except TimeoutError:
         print("Timeout! Starting agin in 10 minutes.")
         # set job 10 minutes later
-        task = q.enqueue_in(datetime.timedelta(minutes=10), background_get_summary, credentials_txt_obj, user_id, job_id=user_id)
+        task = q.enqueue_in(datetime.timedelta(minutes=10), background_get_summary, credentials_txt_obj, user_id, job_id=job_identification)
 
 cur.execute("""
     CREATE TABLE IF NOT EXISTS user_of_summary_service (
