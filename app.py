@@ -29,12 +29,13 @@ def background_get_summary(credentials_txt_obj, user_id):
         if q.fetch_job(job_identification) is None:
             print("Starting....")
             task = q.enqueue(email_assistant.main, credentials_txt_obj, user_id, job_id=job_identification)
+            print(f"Task complete. Summary for user {user_id} is now available.")
         else:
             print(f"Job for User {user_id} already running")
     except TimeoutError:
+        print("Timeout! Starting agin in 10 minutes.")
         # set job 10 minutes later
         task = q.enqueue_in(datetime.timedelta(minutes=10), background_get_summary, credentials_txt_obj, user_id, job_id=user_id)
-    print(f"Task complete. Summary for user {user_id} is now available.")
 
 cur.execute("""
     CREATE TABLE IF NOT EXISTS user_of_summary_service (

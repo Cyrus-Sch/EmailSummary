@@ -13,3 +13,4 @@ psycopg2
 gevent
 redis
 rq
+celery
