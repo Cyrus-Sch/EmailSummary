@@ -27,6 +27,7 @@ def background_get_summary(credentials_txt_obj, user_id):
     try:
         job_identification = f"job_{user_id}"
         print(f"Queuing for User {user_id}")
+        print(q.fetch_job(job_identification))
         if q.fetch_job(job_identification) is None:
             print("Starting....")
             task = q.enqueue(email_assistant.main, credentials_txt_obj, user_id, job_id=job_identification)
@@ -66,6 +67,7 @@ def index():
 @app.route("/empty")
 def empty():
     q.empty()
+    return 200
 @app.route('/result/<string:id_>')
 def get_result(id_):
     print(id_)
