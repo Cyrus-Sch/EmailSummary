@@ -48,6 +48,14 @@ scheduler.start()
 def index():
     return render_template('index.html')
 
+def email_assistant_main_wrapper(*args, **kwargs):
+    try:
+        email_assistant.main(*args, **kwargs)
+        print("Job started successfully.")
+    except Exception as e:
+        print("There was a problem starting the job.")
+        print(f"Error: {e}")
+
 @app.route('/result/<string:id_>')
 def get_result(id_):
     print(id_)
@@ -65,14 +73,20 @@ def get_result(id_):
             creds_txt = json.loads(creds[0][0])
 
             run_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
-            job_id = f"email_job_{str(id_)}"
 
+            job_id = f"email_job_{str(id_)}"
             # Check if the job with the same ID already exists
             existing_job = scheduler.get_job(job_id)
             if existing_job is None:
-                print(f"Job: {str(id_)} does not exist. SCHEDULING JOB")
+                print(f"Job: {job_id} does not exist. SCHEDULING JOB")
                 #If it doesn't exist, add the job
-                scheduler.add_job(email_assistant.main, 'date', run_date=run_time, args=(creds_txt, cur, con, id_), id=job_id)
+                scheduler.add_job(
+                    email_assistant_main_wrapper,
+                    'date',
+                    run_date=run_time,
+                    args=(creds_txt, cur, con, id_),
+                    id=job_id
+                )
                 print(run_time)
             else:
                 print("Job already scheduled for this id")
