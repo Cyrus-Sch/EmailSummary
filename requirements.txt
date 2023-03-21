@@ -10,3 +10,4 @@ requests
 openai
 gunicorn
 psycopg2
+gevent
