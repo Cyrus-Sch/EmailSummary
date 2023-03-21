@@ -17,7 +17,7 @@ con = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = con.cursor()
 
 cur.execute("""
-    CREATE TABLE IF NOT EXISTS user (
+    CREATE TABLE IF NOT EXISTS "user" (
         id SERIAL PRIMARY KEY,
         credentials TEXT,
         email TEXT,
