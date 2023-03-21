@@ -55,7 +55,7 @@ def run_script():
         # Extract the credentials and user_id from the row
         credentials_json, user_id = user[:2]
         credentials = json.loads(credentials_json)
-        background_get_summary(credentials, cur, con, user_id)
+        background_get_summary(credentials, user_id)
 
 @app.route('/')
 def index():
@@ -86,7 +86,7 @@ def get_result(id_):
                 print(str(cred))
             creds_txt = json.loads(creds[0][0])
             print("Object passing to mail assistant is: " + str(creds_txt))
-            background_get_summary(str(creds_txt), cur, con, str(id_))
+            background_get_summary(str(creds_txt),  str(id_))
         return jsonify(row), 200
 
 @app.route('/oauth2callback')
