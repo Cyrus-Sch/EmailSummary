@@ -63,7 +63,7 @@ def run_script():
 def index():
     return render_template('index.html')
 
-@app.route("/empty"):
+@app.route("/empty")
 def empty():
     q.empty()
 @app.route('/result/<string:id_>')
