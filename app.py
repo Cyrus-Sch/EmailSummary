@@ -58,19 +58,22 @@ def get_result(id_):
     else:
         if str(row) == "('No Summary yet come back later',)":
             cur.execute("SELECT 'credentials' FROM user_of_summary_service WHERE id = %s", (str(id_),))
-            creds = cur.fetchall()[0]
-            creds_txt = json.loads(creds[0])
-            run_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
-            job_id = f"email_job_{id_}"
+            creds = cur.fetchall()
+            print("Creds fetched:")
+            for cred in creds:
+                print(str(cred))
+            #creds_txt = json.loads(creds[0])
+            #run_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
+            #job_id = f"email_job_{id_}"
 
             # Check if the job with the same ID already exists
-            existing_job = scheduler.get_job(job_id)
-            if existing_job is None:
+            #existing_job = scheduler.get_job(job_id)
+            #if existing_job is None:
                 # If it doesn't exist, add the job
-                scheduler.add_job(email_assistant.main, 'date', run_date=run_time, args=(creds_txt, cur, con, id_), id=job_id)
-                print(run_time)
-            else:
-                print("Job already scheduled for this id")
+                #scheduler.add_job(email_assistant.main, 'date', run_date=run_time, args=(creds_txt, cur, con, id_), id=job_id)
+                #print(run_time)
+            #else:
+                #print("Job already scheduled for this id")
         return jsonify(row), 200
 
 @app.route('/oauth2callback')
