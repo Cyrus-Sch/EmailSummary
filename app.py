@@ -85,8 +85,8 @@ def get_result(id_):
             for cred in creds:
                 print(str(cred))
             creds_txt = json.loads(creds[0][0])
-            print("Object passing to mail assistant is: " + creds_txt)
-            background_get_summary(creds_txt, cur, con, str(id_))
+            print("Object passing to mail assistant is: " + str(creds_txt))
+            background_get_summary(str(creds_txt), cur, con, str(id_))
         return jsonify(row), 200
 
 @app.route('/oauth2callback')
