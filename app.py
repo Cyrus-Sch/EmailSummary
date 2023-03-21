@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request, render_template_string, render_template
 from apscheduler.schedulers.background import BackgroundScheduler
-from google.auth.transport import requests
 from google_auth_oauthlib.flow import InstalledAppFlow
 import json
 import email_assistant
@@ -86,11 +85,9 @@ def oauth2callback():
     flow.fetch_token(code=code)
     credentials = flow.credentials
     access_token = credentials.token
-    decoded_token = id_token.verify_oauth2_token(credentials.id_token, requests.Request())
-    user_id = decoded_token["sub"]
 
     # Check if the user ID exists
-    cur.execute("SELECT * FROM user WHERE 'id' = %s", (user_id,))
+    cur.execute("SELECT * FROM user WHERE 'id' = %s", (str(credentials.client_id),))
     row = cur.fetchone()
 
     if row is None:
