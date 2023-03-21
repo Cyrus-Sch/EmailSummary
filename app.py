@@ -28,7 +28,8 @@ def background_get_summary(credentials_txt_obj, user_id):
         job_identification = f"job_{user_id}"
         print(f"Queuing for User {user_id}")
         print(q.fetch_job(job_identification))
-        if q.fetch_job(job_identification) is None:
+        job = q.fetch_job(job_identification)
+        if job is None and job.job.get_status() is not "finished" or job.job.get_status() is not "failed":
             print("Starting....")
             task = q.enqueue(email_assistant.main, credentials_txt_obj, user_id, job_id=job_identification)
             print(f"Task complete. Summary for user {user_id} is now available.")
