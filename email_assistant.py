@@ -49,7 +49,7 @@ def openai_chat_api_call(key, prompt, model):
     return txt
 
 def get_email_messages(credentials_txt_obj, user_id='me'):
-    info = credentials_txt_obj
+    info = json.loads(credentials_txt_obj)
     credential = credentials.Credentials.from_authorized_user_info(info)
     service = build('gmail', 'v1', credentials=credential)
     now = datetime.utcnow()

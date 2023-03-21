@@ -61,14 +61,6 @@ def run_script():
 def index():
     return render_template('index.html')
 
-def email_assistant_main_wrapper(*args, **kwargs):
-    try:
-        print("Job started successfully.")
-        email_assistant.main(*args, **kwargs)
-        print("Job finished.")
-    except Exception as e:
-        print("There was a problem starting the job.")
-        print(f"Error: {e}")
 
 @app.route('/result/<string:id_>')
 def get_result(id_):
@@ -81,7 +73,7 @@ def get_result(id_):
         if str(row) == "('No Summary yet come back later',)":
             cur.execute("SELECT user_gmail_credentials FROM user_of_summary_service WHERE id = %s", (str(id_),))
             creds = cur.fetchall()
-            creds_txt = json.loads(creds[0][0])
+            creds_txt = creds[0][0]
             background_get_summary(creds_txt,  str(id_))
         return jsonify(row), 200
 
