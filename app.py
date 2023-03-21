@@ -8,6 +8,8 @@ import sqlite3
 import datetime
 import os
 import psycopg2
+from apscheduler.schedulers.gevent import GeventScheduler
+
 from google.oauth2 import id_token
 
 app = Flask(__name__)
@@ -40,7 +42,8 @@ def run_script():
 
         print(f"Script finished for user {user_id}.")
 
-scheduler = BackgroundScheduler()
+scheduler = GeventScheduler()
+
 scheduler.add_job(run_script, 'interval', hours=4)
 scheduler.start()
 
