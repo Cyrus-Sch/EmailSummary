@@ -74,7 +74,7 @@ def get_result(id_):
             cur.execute("SELECT user_gmail_credentials FROM user_of_summary_service WHERE id = %s", (str(id_),))
             creds = cur.fetchall()
             creds_txt = creds[0][0]
-            #email expects str
+            print(str(creds_txt))
             background_get_summary(str(creds_txt),  str(id_))
         return jsonify(row), 200
 
