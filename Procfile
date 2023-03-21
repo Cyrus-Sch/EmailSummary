@@ -1,2 +1,2 @@
-web: gunicorn --workers 1 your_app_module:app
+web: gunicorn --workers 1 app:app
 
