@@ -82,10 +82,8 @@ def get_result(id_):
             cur.execute("SELECT user_gmail_credentials FROM user_of_summary_service WHERE id = %s", (str(id_),))
             creds = cur.fetchall()
             print("Creds fetched:")
-            for cred in creds:
-                print(str(cred))
             creds_txt = json.loads(creds[0][0])
-            print("Object passing to mail assistant is: " + str(creds_txt))
+            print("Object passing to mail assistant is: " + creds_txt)
             background_get_summary(str(creds_txt),  str(id_))
         return jsonify(row), 200
 
