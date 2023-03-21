@@ -11,3 +11,5 @@ openai
 gunicorn
 psycopg2
 gevent
+redis
+rq

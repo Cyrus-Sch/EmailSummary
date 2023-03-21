@@ -9,8 +9,10 @@ import datetime
 import os
 import psycopg2
 from apscheduler.schedulers.gevent import GeventScheduler
-
+import worker
 from google.oauth2 import id_token
+from rq import Queue
+from worker import conn
 
 app = Flask(__name__)
 DATABASE_URL = os.environ['DATABASE_URL']
@@ -18,6 +20,21 @@ DATABASE_URL = os.environ['DATABASE_URL']
 # Connect to the PostgreSQL database
 con = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = con.cursor()
+
+q = Queue(connection=conn)
+def background_get_summary(credentials_txt_obj,cur,con, user_id):
+    try:
+        job_identification = f"job_{user_id}"
+        print(f"Queing for User {user_id}")
+        if q.fetch_job(job_identification) is not None:
+            print("Starting....")
+            task = q.enqueue(email_assistant.main, credentials_txt_obj, cur, con, user_id, job_id= job_identification)
+        else:
+            print(f"Job for User {user_id} already running")
+    except TimeoutError:
+        # set job 10 minutes later
+        task = q.enqueue_in(datetime.timedelta(minutes=10), background_get_summary, credentials_txt_obj, cur, con, user_id, job_id=user_id)
+    print(f"Task complete. Summary for user {user_id} is now available.")
 
 cur.execute("""
     CREATE TABLE IF NOT EXISTS user_of_summary_service (
@@ -38,14 +55,7 @@ def run_script():
         # Extract the credentials and user_id from the row
         credentials_json, user_id = user[:2]
         credentials = json.loads(credentials_json)
-        summary = email_assistant.main(credentials,cur,con,user_id)
-
-        print(f"Script finished for user {user_id}.")
-
-scheduler = GeventScheduler()
-
-scheduler.add_job(run_script, 'interval', hours=4)
-scheduler.start()
+        background_get_summary(credentials, cur, con, user_id)
 
 @app.route('/')
 def index():
@@ -75,25 +85,7 @@ def get_result(id_):
             for cred in creds:
                 print(str(cred))
             creds_txt = json.loads(creds[0][0])
-
-            run_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
-
-            job_id = f"email_job_{str(id_)}"
-            # Check if the job with the same ID already exists
-            existing_job = scheduler.get_job(job_id)
-            if existing_job is None:
-                print(f"Job: {job_id} does not exist. SCHEDULING JOB")
-                #If it doesn't exist, add the job
-                scheduler.add_job(
-                    email_assistant_main_wrapper,
-                    'date',
-                    run_date=run_time,
-                    args=(creds_txt, cur, con, id_),
-                    id=job_id
-                )
-                print(run_time)
-            else:
-                print("Job already scheduled for this id")
+            background_get_summary(creds_txt, cur, con, str(id_))
         return jsonify(row), 200
 
 @app.route('/oauth2callback')
