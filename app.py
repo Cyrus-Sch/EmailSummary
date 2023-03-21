@@ -31,6 +31,7 @@ def background_get_summary(credentials_txt_obj, user_id):
         job = q.fetch_job(job_identification)
         if job.get_status() == "finished" or job.get_status() == "failed":
             job.delete()
+        job = q.fetch_job(job_identification)
         if job is None:
             print("Starting....")
             task = q.enqueue(email_assistant.main, credentials_txt_obj, user_id, job_id=job_identification)
