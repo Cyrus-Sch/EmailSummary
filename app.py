@@ -50,8 +50,9 @@ def index():
 
 def email_assistant_main_wrapper(*args, **kwargs):
     try:
-        email_assistant.main(*args, **kwargs)
         print("Job started successfully.")
+        email_assistant.main(*args, **kwargs)
+        print("Job finished.")
     except Exception as e:
         print("There was a problem starting the job.")
         print(f"Error: {e}")
