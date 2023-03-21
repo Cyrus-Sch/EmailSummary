@@ -29,8 +29,9 @@ def background_get_summary(credentials_txt_obj, user_id):
         print(f"Queuing for User {user_id}")
         print(q.fetch_job(job_identification))
         job = q.fetch_job(job_identification)
-        if job.get_status() == "finished" or job.get_status() == "failed":
-            job.delete()
+        if job is not None:
+            if job.get_status() == "finished" or job.get_status() == "failed":
+                job.delete()
         job = q.fetch_job(job_identification)
         if job is None:
             print("Starting....")
