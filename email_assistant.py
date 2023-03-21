@@ -140,7 +140,7 @@ def main(credentials_txt_obj,cur,con, user_id):
         final_prompt += summarie + "\n"
     # Write all outputs to a txt file
     summary = summarize_all(final_prompt, "Cyrus Scholten", ['news-report', 'personal', 'informative'])
-    cur.execute("UPDATE user_of_summary_service SET 'current_summary' = %s WHERE 'id' = %s", (summary, str(user_id),))
+    cur.execute("UPDATE user_of_summary_service SET current_summary = %s WHERE id = %s", (summary, str(user_id),))
     con.commit()
     return summary
 
