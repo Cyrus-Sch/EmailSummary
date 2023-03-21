@@ -96,7 +96,7 @@ def oauth2callback():
             VALUES (%s, %s, %s, %s, %s)
         """, (str(credentials.to_json()), str(credentials.client_id), '', 'No Summary yet come back later', '',))
     else:
-        cur.execute("UPDATE user SET credentials = %s WHERE id = %s",
+        cur.execute("UPDATE user SET 'credentials' = %s WHERE 'id' = %s",
                     (str(credentials.to_json()), str(credentials.client_id),))
 
     con.commit()

@@ -82,7 +82,7 @@ def summarize_email_gpt(email, assistant_style=True, max_prompt_tokens=4090):
     prompt = f"Summarize the following email.{email}"
     if not assistant_style:
         prompt = f"Summarize the following email:{email}"
-    return openai_chat_api_call(OPENAI_API_KEY, prompt, model)
+    return openai_chat_api_call(api_key, prompt, model)
 
 def summarize_all(email_list, client, styles, max_prompt_tokens=4090):
     import os
@@ -102,7 +102,7 @@ def summarize_all(email_list, client, styles, max_prompt_tokens=4090):
     Please write to the reader. For example if the Mail contains: Cyrus Scholten is receving money. Write you will receive money!.
     Email Summaries: {email_list}
     """
-    return openai_chat_api_call(OPENAI_API_KEY, prompt, model)
+    return openai_chat_api_call(api_key, prompt, model)
 
 def test_variety():
     emails = get_email_messages()
@@ -140,7 +140,7 @@ def main(credentials_txt_obj,cur,con, user_id):
         final_prompt += summarie + "\n"
     # Write all outputs to a txt file
     summary = summarize_all(final_prompt, "Cyrus Scholten", ['news-report', 'personal', 'informative'])
-    cur.execute("UPDATE user SET current_summary = %s WHERE id = %s", (summary, str(user_id),))
+    cur.execute("UPDATE user SET 'current_summary' = %s WHERE 'id' = %s", (summary, str(user_id),))
     con.commit()
     return summary
 
