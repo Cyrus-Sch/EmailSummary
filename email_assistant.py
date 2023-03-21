@@ -48,9 +48,8 @@ def openai_chat_api_call(key, prompt, model):
         txt = "This Mail could'nt Open right!"
     return txt
 
-def get_email_messages(credentials_txt_obj, user_id='me'):
+def get_email_messages(credentials_txt_obj:str, user_id='me'):
     #txt
-    info = json.loads(credentials_txt_obj)
     credential = credentials.Credentials.from_authorized_user_info(info)
     service = build('gmail', 'v1', credentials=credential)
     now = datetime.utcnow()
