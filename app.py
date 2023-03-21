@@ -22,6 +22,7 @@ con = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = con.cursor()
 
 q = Queue(connection=conn)
+
 def background_get_summary(credentials_txt_obj, user_id):
     try:
         job_identification = f"job_{user_id}"
@@ -62,7 +63,9 @@ def run_script():
 def index():
     return render_template('index.html')
 
-
+@app.route("/empty"):
+def empty():
+    q.empty()
 @app.route('/result/<string:id_>')
 def get_result(id_):
     print(id_)
