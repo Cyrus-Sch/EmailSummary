@@ -13,6 +13,7 @@ from googleapiclient.discovery import build
 import pickle
 import json
 import re
+import psycopg2
 
 
 def preprocess_email(email: str) -> str:
@@ -125,7 +126,11 @@ def test_variety():
                 file.write(f"Summary with styles {style}:\n{summary}\n")
                 file.write("\n")
 
-def main(credentials_txt_obj,cur,con, user_id):
+def main(credentials_txt_obj, user_id):
+    DATABASE_URL = os.environ['DATABASE_URL']
+    # Connect to the PostgreSQL database
+    con = psycopg2.connect(DATABASE_URL, sslmode='require')
+    cur = con.cursor()
     print("Fetching Mail...")
     emails = get_email_messages(credentials_txt_obj)
     summaries = []
@@ -142,5 +147,7 @@ def main(credentials_txt_obj,cur,con, user_id):
     summary = summarize_all(final_prompt, "Cyrus Scholten", ['news-report', 'personal', 'informative'])
     cur.execute("UPDATE user_of_summary_service SET current_summary = %s WHERE id = %s", (summary, str(user_id),))
     con.commit()
+    cur.close()
+    con.close()
     return summary
 

@@ -22,18 +22,18 @@ con = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = con.cursor()
 
 q = Queue(connection=conn)
-def background_get_summary(credentials_txt_obj,cur,con, user_id):
+def background_get_summary(credentials_txt_obj, user_id):
     try:
         job_identification = f"job_{user_id}"
-        print(f"Queing for User {user_id}")
+        print(f"Queuing for User {user_id}")
         if q.fetch_job(job_identification) is None:
             print("Starting....")
-            task = q.enqueue(email_assistant.main, credentials_txt_obj, cur, con, user_id, job_id= job_identification)
+            task = q.enqueue(email_assistant.main, credentials_txt_obj, user_id, job_id=job_identification)
         else:
             print(f"Job for User {user_id} already running")
     except TimeoutError:
         # set job 10 minutes later
-        task = q.enqueue_in(datetime.timedelta(minutes=10), background_get_summary, credentials_txt_obj, cur, con, user_id, job_id=user_id)
+        task = q.enqueue_in(datetime.timedelta(minutes=10), background_get_summary, credentials_txt_obj, user_id, job_id=user_id)
     print(f"Task complete. Summary for user {user_id} is now available.")
 
 cur.execute("""
