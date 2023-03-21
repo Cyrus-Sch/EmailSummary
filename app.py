@@ -18,7 +18,7 @@ cur = con.cursor()
 
 cur.execute("""
     CREATE TABLE IF NOT EXISTS "user" (
-        id SERIAL PRIMARY KEY,
+        id TEXT,
         credentials TEXT,
         email TEXT,
         current_summary TEXT,
