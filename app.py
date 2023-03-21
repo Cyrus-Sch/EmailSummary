@@ -81,10 +81,8 @@ def get_result(id_):
         if str(row) == "('No Summary yet come back later',)":
             cur.execute("SELECT user_gmail_credentials FROM user_of_summary_service WHERE id = %s", (str(id_),))
             creds = cur.fetchall()
-            print("Creds fetched:")
             creds_txt = json.loads(creds[0][0])
-            print("Object passing to mail assistant is: " + creds_txt)
-            background_get_summary(str(creds_txt),  str(id_))
+            background_get_summary(creds_txt,  str(id_))
         return jsonify(row), 200
 
 @app.route('/oauth2callback')
