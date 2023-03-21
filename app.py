@@ -19,8 +19,8 @@ cur = con.cursor()
 
 cur.execute("""
     CREATE TABLE IF NOT EXISTS user_of_summary_service (
+        user_gmail_credentials TEXT,
         id TEXT PRIMARY KEY,
-        credentials TEXT,
         email TEXT,
         current_summary TEXT,
         last_created TIMESTAMP
@@ -51,13 +51,13 @@ def index():
 @app.route('/result/<string:id_>')
 def get_result(id_):
     print(id_)
-    cur.execute("SELECT current_summary FROM user_of_summary_service WHERE id = %s", (str(id_),))
+    cur.execute("SELECT current_summary FROM user_of_summary_service WHERE 'id' = %s", (str(id_),))
     row = cur.fetchone()
     if row is None:
         return jsonify(f'Nothing found for id: {id_}'), 404
     else:
         if str(row) == "('No Summary yet come back later',)":
-            cur.execute("SELECT 'credentials' FROM user_of_summary_service WHERE id = %s", (str(id_),))
+            cur.execute("SELECT user_gmail_credentials FROM user_of_summary_service WHERE 'id' = %s", (str(id_),))
             creds = cur.fetchall()
             print("Creds fetched:")
             for cred in creds:
@@ -95,11 +95,11 @@ def oauth2callback():
 
     if row is None:
         cur.execute("""
-            INSERT INTO user_of_summary_service (credentials, id, email, current_summary, last_created)
+            INSERT INTO user_of_summary_service (user_gmail_credentials, id, email, current_summary, last_created)
             VALUES (%s, %s, %s, %s, %s)
         """, (str(credentials.to_json()), str(credentials.client_id), '', 'No Summary yet come back later', None,))
     else:
-        cur.execute("UPDATE user_of_summary_service SET 'credentials' = %s WHERE 'id' = %s",
+        cur.execute("UPDATE user_of_summary_service SET user_gmail_credentials = %s WHERE 'id' = %s",
                     (str(credentials.to_json()), str(credentials.client_id),))
 
     con.commit()
