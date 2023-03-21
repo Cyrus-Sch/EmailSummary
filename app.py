@@ -94,7 +94,7 @@ def oauth2callback():
         cur.execute("""
             INSERT INTO user_of_summary_service (credentials, id, email, current_summary, last_created)
             VALUES (%s, %s, %s, %s, %s)
-        """, (str(credentials.to_json()), str(credentials.client_id), '', 'No Summary yet come back later', '',))
+        """, (str(credentials.to_json()), str(credentials.client_id), '', 'No Summary yet come back later', None,))
     else:
         cur.execute("UPDATE user_of_summary_service SET 'credentials' = %s WHERE 'id' = %s",
                     (str(credentials.to_json()), str(credentials.client_id),))
