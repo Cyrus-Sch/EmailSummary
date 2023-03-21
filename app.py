@@ -57,7 +57,7 @@ def get_result(id_):
         return jsonify(f'Nothing found for id: {id_}'), 404
     else:
         if str(row) == "('No Summary yet come back later',)":
-            cur.execute("SELECT credentials FROM user_of_summary_service WHERE id = %s", (str(id_),))
+            cur.execute("SELECT 'credentials' FROM user_of_summary_service WHERE id = %s", (str(id_),))
             creds = cur.fetchall()[0]
             creds_txt = json.loads(creds[0])
             run_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
