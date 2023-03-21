@@ -26,7 +26,7 @@ def background_get_summary(credentials_txt_obj,cur,con, user_id):
     try:
         job_identification = f"job_{user_id}"
         print(f"Queing for User {user_id}")
-        if q.fetch_job(job_identification) is not None:
+        if q.fetch_job(job_identification) is None:
             print("Starting....")
             task = q.enqueue(email_assistant.main, credentials_txt_obj, cur, con, user_id, job_id= job_identification)
         else:
