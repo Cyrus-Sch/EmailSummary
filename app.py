@@ -18,7 +18,7 @@ con = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = con.cursor()
 
 cur.execute("""
-    CREATE TABLE IF NOT EXISTS "user" (
+    CREATE TABLE IF NOT EXISTS user_of_summary_service (
         id TEXT PRIMARY KEY,
         credentials TEXT,
         email TEXT,
@@ -30,7 +30,7 @@ con.commit()
 
 def run_script():
     print("Running script...")
-    cur.execute("SELECT * FROM user")
+    cur.execute("SELECT * FROM user_of_summary_service")
     users = cur.fetchall()
     for user in users:
         # Extract the credentials and user_id from the row
@@ -51,13 +51,13 @@ def index():
 @app.route('/result/<string:id_>')
 def get_result(id_):
     print(id_)
-    cur.execute("SELECT * FROM user WHERE id = %s", (str(id_),))
+    cur.execute("SELECT * FROM user_of_summary_service WHERE id = %s", (str(id_),))
     row = cur.fetchone()
     if row is None:
         return jsonify(f'Nothing found for id: {id_}'), 404
     else:
         if str(row) == "('No Summary yet come back later',)":
-            cur.execute("SELECT credentials FROM user WHERE id = %s", (str(id_),))
+            cur.execute("SELECT credentials FROM user_of_summary_service WHERE id = %s", (str(id_),))
             creds = cur.fetchall()[0]
             creds_txt = json.loads(creds[0])
             run_time = datetime.datetime.now() + datetime.timedelta(seconds=10)
@@ -87,16 +87,16 @@ def oauth2callback():
     access_token = credentials.token
 
     # Check if the user ID exists
-    cur.execute("SELECT * FROM user WHERE 'id' = %s", (str(credentials.client_id),))
+    cur.execute("SELECT * FROM user_of_summary_service WHERE 'id' = %s", (str(credentials.client_id),))
     row = cur.fetchone()
 
     if row is None:
         cur.execute("""
-            INSERT INTO user (credentials, id, email, current_summary, last_created)
+            INSERT INTO user_of_summary_service (credentials, id, email, current_summary, last_created)
             VALUES (%s, %s, %s, %s, %s)
         """, (str(credentials.to_json()), str(credentials.client_id), '', 'No Summary yet come back later', '',))
     else:
-        cur.execute("UPDATE user SET 'credentials' = %s WHERE 'id' = %s",
+        cur.execute("UPDATE user_of_summary_service SET 'credentials' = %s WHERE 'id' = %s",
                     (str(credentials.to_json()), str(credentials.client_id),))
 
     con.commit()
