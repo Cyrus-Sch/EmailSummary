@@ -1,10 +1,8 @@
 from flask import Flask, jsonify, request, render_template_string, render_template
-from apscheduler.schedulers.background import BackgroundScheduler
 from google_auth_oauthlib.flow import InstalledAppFlow
 import json
 import email_assistant
 import get_gmail
-import sqlite3
 import datetime
 import os
 import psycopg2
@@ -27,8 +25,8 @@ def background_get_summary(credentials_txt_obj, user_id):
     try:
         job_identification = f"job_{user_id}"
         print(f"Queuing for User {user_id}")
-        print(q.fetch_job(job_identification))
         job = q.fetch_job(job_identification)
+        print(job)
         if job is not None:
             if job.get_status() == "finished" or job.get_status() == "failed":
                 job.delete()
@@ -54,16 +52,6 @@ cur.execute("""
     )
 """)
 con.commit()
-
-def run_script():
-    print("Running script...")
-    cur.execute("SELECT * FROM user_of_summary_service")
-    users = cur.fetchall()
-    for user in users:
-        # Extract the credentials and user_id from the row
-        credentials_json, user_id = user[:2]
-        credentials = json.loads(credentials_json)
-        background_get_summary(credentials, user_id)
 
 @app.route('/')
 def index():
