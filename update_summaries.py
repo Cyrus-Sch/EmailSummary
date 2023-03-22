@@ -18,3 +18,6 @@ def run_script():
         credentials_json, user_id = user[:2]
         credentials = json.loads(credentials_json)
         app.background_get_summary(credentials, user_id)
+
+if __name__ == "__main__":
+    run_script()
