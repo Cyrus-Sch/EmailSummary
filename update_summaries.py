@@ -10,7 +10,10 @@ def run_script():
     print("Running script...")
     cur.execute("SELECT * FROM user_of_summary_service")
     users = cur.fetchall()
+    con.close()
+    cur.close()
     for user in users:
+        print("Running for: " + user[1])
         # Extract the credentials and user_id from the row
         credentials_json, user_id = user[:2]
         credentials = json.loads(credentials_json)
