@@ -16,8 +16,7 @@ def run_script():
         print("Running for: " + user[1])
         # Extract the credentials and user_id from the row
         credentials_json, user_id = user[:2]
-        credentials = json.loads(credentials_json)
-        app.background_get_summary(credentials, user_id)
+        app.background_get_summary(str(credentials_json), user_id)
 
 if __name__ == "__main__":
     run_script()
